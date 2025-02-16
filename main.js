@@ -7,7 +7,7 @@ Extraemos la información de la imagen satelital (sus metadatos, con GDAL) para 
 
 
 // Variables globales
-let map, imageLayer, tileTonerLite, tileOSM, geoJsonLayer, sidebar;
+let map, imageLayer, CartoDB_Positron, tileOSM, geoJsonLayer, sidebar;
 
 function makeMap() {
 
@@ -44,16 +44,14 @@ function makeMap() {
     function addTileLayer(map) {
     // Agregamos una capa de tiles al mapa. En este caso, es la capa 'toner-lite' de StadiaMaps
     // Stadia_StamenTonerLite
-    let tileUrl = 'https://tiles.stadiamaps.com/tiles/stamen_toner_lite/{z}/{x}/{y}{r}.{ext}';
-    tileTonerLite = L.tileLayer(tileUrl, {
-        minZoom: 0,
-	    maxZoom: 20,
-	    attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-	    ext: 'png',
-        bounds: bounds
-    })
+    // cambie por cartodb positron
+    CartoDB_Positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 20
+    });
     
-    tileTonerLite.addTo(map);
+    CartoDB_Positron.addTo(map);
     }
 
     let imageUrl = 'https://tania-karo.github.io/pilot2-mapa-calor-asu/imagenes/mapa-calor-asu.png';
@@ -281,7 +279,7 @@ function makeMap() {
 function verMapaCalor() {
     if (!imageLayer || !map) return; // Evita errores si el mapa aún no está cargado
     imageLayer.setOpacity(1);         // Opacidad total
-    map.removeLayer(tileTonerLite);    // Ocultar calles
+    map.removeLayer(CartoDB_Positron);    // Ocultar calles
     if (geoJsonLayer) map.removeLayer(geoJsonLayer); // Ocultar GeoJSON si está cargado
     map.setZoom(11.5);
 
@@ -292,7 +290,7 @@ function verMapaCombinado() {
     if (!imageLayer || !map) return; // Evita errores si el mapa aún no está cargado
     
     // Restaurar la capa de calles
-    map.addLayer(tileTonerLite);  // Añadir la capa de calles que habíamos removido
+    map.addLayer(CartoDB_Positron);  // Añadir la capa de calles que habíamos removido
 
     // Restaurar el GeoJSON
     if (geoJsonLayer) map.addLayer(geoJsonLayer); // Añadir de nuevo el GeoJSON si fue removido
