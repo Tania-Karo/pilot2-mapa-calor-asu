@@ -56,7 +56,7 @@ function makeMap() {
     tileTonerLite.addTo(map);
     }
 
-    let imageUrl = '/imagenes/mapa-calor-asu.png';
+    let imageUrl = 'https://tania-karo.github.io/pilot2-mapa-calor-asu/imagenes/mapa-calor-asu.png';
     function addImageOverlay(map, imageUrl, imageBounds) {
     // Agregamos la imagen satelital
     //let imageBounds = [lowerLeft, upperRight];
@@ -66,10 +66,10 @@ function makeMap() {
     // map.setMaxBounds(bounds); // Restringe la vista dentro de la imagen satelital
     // map.fitBounds(bounds);    // Ajusta el zoom para que la imagen se vea bien
 
-    let geojsonUrl = 'escuelas-piloto-3.geojson';
+    let geojsonUrl = 'https://raw.githubusercontent.com/Tania-Karo/pilot2-mapa-calor-asu/refs/heads/main/escuelas-piloto-3.geojson';
     function addGeoJSON(map, geojsonUrl) {
     let myIcon = L.icon({
-        iconUrl: '/imagenes/icon-1.png',
+        iconUrl: 'https://tania-karo.github.io/pilot2-mapa-calor-asu/imagenes/icon-1.png',
         iconSize:     [64, 64], // size of the icon
         iconAnchor:   [32, 64], // point of the icon which will correspond to marker's location
         popupAnchor:  [0, -64] // point from which the popup should open relative to the iconAnchor
@@ -143,7 +143,7 @@ function makeMap() {
     sidebar.addPanel({
         id: 'ghlink',
         tab: '<i class="fa fa-github"></i>',
-        button: 'https://github.com/Tania-Karo/',
+        button: 'https://github.com/EsConsenso',
         position: 'bottom'
     });
 
