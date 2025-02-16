@@ -58,7 +58,7 @@ function makeMap() {
     function addImageOverlay(map, imageUrl, imageBounds) {
     // Agregamos la imagen satelital
     //let imageBounds = [lowerLeft, upperRight];
-    imageLayer = L.imageOverlay(imageUrl, imageBounds, { opacity: 0.7 }).addTo(map);
+    imageLayer = L.imageOverlay(imageUrl, imageBounds, { opacity: 0.5 }).addTo(map);
     }
 
     // map.setMaxBounds(bounds); // Restringe la vista dentro de la imagen satelital
