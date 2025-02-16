@@ -5,9 +5,8 @@ Pasamos la imagen satelital en formato GeoTIFF a una imagen PNG con GDAL.
 Extraemos la información de la imagen satelital (sus metadatos, con GDAL) para definir los límites del mapa. 
 */
 
-
 // Variables globales
-let map, imageLayer, CartoDB_Positron, tileOSM, geoJsonLayer, sidebar;
+let map, imageLayer, layerToner, tileOSM, geoJsonLayer, sidebar;
 
 function makeMap() {
 
@@ -29,36 +28,36 @@ function makeMap() {
     // Las coordenadas geográficas son las del centro de la imagen satelital.
     map = L.map('map', {
         center: center,
-        zoom: 14,
+        zoom: 14.5,
         // maxZoom: 19,     Opcional: fuerza un zoom máximo en el área
         minZoom: 11.5, 
         maxBounds: bounds, // Restringe el área visible
         maxBoundsViscosity: 1.0 // Mantiene al usuario dentro de los límites
     });
 
+    /*
     tileOSM = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
+    */
 
     function addTileLayer(map) {
     // Agregamos una capa de tiles al mapa. En este caso, es la capa 'toner-lite' de StadiaMaps
     // Stadia_StamenTonerLite
-    // cambie por cartodb positron
-    CartoDB_Positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: 'abcd',
-        maxZoom: 20
-    });
+    layerToner = L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_toner_lite/{z}/{x}/{y}{r}.png', {
+        maxZoom: 20,
+        attribution: '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>', 
+    }).addTo(map);
     
-    CartoDB_Positron.addTo(map);
+    layerToner.addTo(map);
     }
 
     let imageUrl = 'https://tania-karo.github.io/pilot2-mapa-calor-asu/imagenes/mapa-calor-asu.png';
     function addImageOverlay(map, imageUrl, imageBounds) {
     // Agregamos la imagen satelital
     //let imageBounds = [lowerLeft, upperRight];
-    imageLayer = L.imageOverlay(imageUrl, imageBounds, { opacity: 0.5 }).addTo(map);
+    imageLayer = L.imageOverlay(imageUrl, imageBounds, { opacity: 0.7 }).addTo(map);
     }
 
     // map.setMaxBounds(bounds); // Restringe la vista dentro de la imagen satelital
@@ -279,7 +278,7 @@ function makeMap() {
 function verMapaCalor() {
     if (!imageLayer || !map) return; // Evita errores si el mapa aún no está cargado
     imageLayer.setOpacity(1);         // Opacidad total
-    map.removeLayer(CartoDB_Positron);    // Ocultar calles
+    map.removeLayer(layerToner);    // Ocultar calles
     if (geoJsonLayer) map.removeLayer(geoJsonLayer); // Ocultar GeoJSON si está cargado
     map.setZoom(11.5);
 
@@ -290,7 +289,7 @@ function verMapaCombinado() {
     if (!imageLayer || !map) return; // Evita errores si el mapa aún no está cargado
     
     // Restaurar la capa de calles
-    map.addLayer(CartoDB_Positron);  // Añadir la capa de calles que habíamos removido
+    map.addLayer(layerToner);  // Añadir la capa de calles que habíamos removido
 
     // Restaurar el GeoJSON
     if (geoJsonLayer) map.addLayer(geoJsonLayer); // Añadir de nuevo el GeoJSON si fue removido
