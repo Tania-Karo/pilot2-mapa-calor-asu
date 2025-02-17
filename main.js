@@ -52,7 +52,9 @@ function makeMap() {
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
 
-        tileOSM.getContainer().style.filter = "grayscale(100%)"; // Aplica el filtro
+        tileOSM.on('tileload', function (event) {
+            event.tile.style.filter = "grayscale(100%)"; // Aplica el filtro a cada imagen
+        });
     }
     
 
@@ -66,6 +68,7 @@ function makeMap() {
     // map.setMaxBounds(bounds); // Restringe la vista dentro de la imagen satelital
     // map.fitBounds(bounds);    // Ajusta el zoom para que la imagen se vea bien
 
+    /*
     let geojsonUrl = 'https://raw.githubusercontent.com/Tania-Karo/pilot2-mapa-calor-asu/refs/heads/main/escuelas-piloto-3.geojson';
     function addGeoJSON(map, geojsonUrl) {
     let myIcon = L.icon({
@@ -107,6 +110,60 @@ function makeMap() {
     })
     .catch(error => console.error('Error cargando GeoJSON:', error));
     }
+    */
+
+    let geojsonUrl = 'https://raw.githubusercontent.com/Tania-Karo/pilot2-mapa-calor-asu/refs/heads/main/escuelas-piloto-3.geojson';
+
+    function addGeoJSON(map, geojsonUrl) {
+        function getIconSize(zoom) {
+            let size = Math.max(20, zoom * 3); // Ajusta el tamaño base del icono
+            return [size, size];
+        }
+
+        function createIcon(zoom) {
+            let iconSize = getIconSize(zoom);
+            return L.icon({
+                iconUrl: 'https://tania-karo.github.io/pilot2-mapa-calor-asu/imagenes/icon-1.png',
+                iconSize: iconSize,
+                iconAnchor: [iconSize[0] / 2, iconSize[1]], 
+                popupAnchor: [0, -iconSize[1] / 2]
+            });
+        }
+
+        // Cargar archivo GeoJSON
+        fetch(geojsonUrl)
+            .then(response => response.ok ? response.json() : Promise.reject(`Error fetching GeoJSON: ${response.status}`))
+            .then(data => {
+                geoJsonLayer = L.geoJSON(data, {
+                    pointToLayer: function (feature, latlng) {
+                        return L.marker(latlng, { icon: createIcon(map.getZoom()) });
+                    },
+                    onEachFeature: (feature, layer) => {
+                        let name = feature.properties?.Name || "Sin nombre";
+                        layer.bindPopup(name);
+
+                        layer.on('click', function () {
+                            document.getElementById("escuelaName").textContent = name;
+                            document.getElementById("escuelaInfo").textContent = `Información sobre ${name}`;
+                            sidebar.open('escuela');
+                            map.setView(layer.getLatLng(), 18, { animate: true });
+                        });
+                    }
+                }).addTo(map);
+
+                // Escuchar cambios de zoom para actualizar los íconos
+                map.on('zoomend', function () {
+                    let newZoom = map.getZoom();
+                    geoJsonLayer.eachLayer(layer => {
+                        if (layer instanceof L.Marker) {
+                            layer.setIcon(createIcon(newZoom));
+                        }
+                    });
+                });
+            })
+            .catch(error => console.error('Error cargando GeoJSON:', error));
+    }
+
 
     function addSidebar(map) {
     // Agregamos sidebar
@@ -282,7 +339,7 @@ function verMapaCalor() {
     if (!imageLayer || !map) return; // Evita errores si el mapa aún no está cargado
     imageLayer.setOpacity(1);         // Opacidad total
     map.removeLayer(tileOSM);    // Ocultar calles
-    if (geoJsonLayer) map.removeLayer(geoJsonLayer); // Ocultar GeoJSON si está cargado
+    // if (geoJsonLayer) map.removeLayer(geoJsonLayer); // Ocultar GeoJSON si está cargado
     map.setZoom(11.5);
 
     sidebar.close();
@@ -301,7 +358,7 @@ function verMapaCombinado() {
     imageLayer.setOpacity(0.7); // Restaurar opacidad original, si es lo que deseas
 
     // Restaurar el zoom original
-    map.setView(map.getCenter(), 14);  // Ajustar el zoom al nivel original (en este caso 14)
+    map.setView(center, 14.5);  // Ajustar el zoom al nivel original (en este caso 14)
 
     // Abrir el sidebar de nuevo si lo deseas
     if (sidebar) sidebar.open('home');
