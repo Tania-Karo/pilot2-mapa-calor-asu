@@ -34,24 +34,27 @@ function makeMap() {
         maxBounds: bounds, // Restringe el área visible
         maxBoundsViscosity: 1.0 // Mantiene al usuario dentro de los límites
     });
-
-    /*
-    tileOSM = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
-    */
+    
 
     function addTileLayer(map) {
     // Agregamos una capa de tiles al mapa. En este caso, es la capa 'toner-lite' de StadiaMaps
     // Stadia_StamenTonerLite
+    /*
     layerToner = L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_toner_lite/{z}/{x}/{y}{r}.png', {
         maxZoom: 20,
         attribution: '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>', 
     }).addTo(map);
     
     layerToner.addTo(map);
+    */
+        tileOSM = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        tileOSM.getContainer().style.filter = "grayscale(100%)"; // Aplica el filtro
     }
+    
 
     let imageUrl = 'https://tania-karo.github.io/pilot2-mapa-calor-asu/imagenes/mapa-calor-asu.png';
     function addImageOverlay(map, imageUrl, imageBounds) {
@@ -278,7 +281,7 @@ function makeMap() {
 function verMapaCalor() {
     if (!imageLayer || !map) return; // Evita errores si el mapa aún no está cargado
     imageLayer.setOpacity(1);         // Opacidad total
-    map.removeLayer(layerToner);    // Ocultar calles
+    map.removeLayer(tileOSM);    // Ocultar calles
     if (geoJsonLayer) map.removeLayer(geoJsonLayer); // Ocultar GeoJSON si está cargado
     map.setZoom(11.5);
 
@@ -289,7 +292,7 @@ function verMapaCombinado() {
     if (!imageLayer || !map) return; // Evita errores si el mapa aún no está cargado
     
     // Restaurar la capa de calles
-    map.addLayer(layerToner);  // Añadir la capa de calles que habíamos removido
+    map.addLayer(tileOSM);  // Añadir la capa de calles que habíamos removido
 
     // Restaurar el GeoJSON
     if (geoJsonLayer) map.addLayer(geoJsonLayer); // Añadir de nuevo el GeoJSON si fue removido
