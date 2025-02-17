@@ -349,13 +349,13 @@ function verMapaCombinado() {
     if (!imageLayer || !map) return; // Evita errores si el mapa aún no está cargado
     
     // Restaurar la capa de calles
-    map.addLayer(tileOSM);  // Añadir la capa de calles que habíamos removido
+    addTileLayer(map);  // Añadir la capa de calles que habíamos removido
 
     // Restaurar el GeoJSON
     if (geoJsonLayer) map.addLayer(geoJsonLayer); // Añadir de nuevo el GeoJSON si fue removido
 
     // Restaurar la imagen satelital (opacidad original)
-    imageLayer.setOpacity(0.7); // Restaurar opacidad original, si es lo que deseas
+    imageLayer.setOpacity(0); // Restaurar opacidad original, si es lo que deseas
 
     // Restaurar el zoom original
     map.setView(center, 14.5);  // Ajustar el zoom al nivel original (en este caso 14)
