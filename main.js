@@ -355,7 +355,7 @@ function verMapaCombinado() {
     if (geoJsonLayer) map.addLayer(geoJsonLayer); // Añadir de nuevo el GeoJSON si fue removido
 
     // Restaurar la imagen satelital (opacidad original)
-    imageLayer.setOpacity(0); // Restaurar opacidad original, si es lo que deseas
+    imageLayer.setOpacity(0.7); // Restaurar opacidad original, si es lo que deseas
 
     // Restaurar el zoom original
     map.setView(map.getCenter(), 14.5);  // Ajustar el zoom al nivel original (en este caso 14)
